@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            background-color: #c2fff9;
+            color: white;
+        }
+
+        .container {
+            font-size: 24px;
+            background-color: #c2fff9;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 50vh;
+            justify-content: center;
+        }
+
+        h1 {
+            font-size: 2em;
+            margin: 0;
+            margin-bottom: 2%;
+            color: rgb(3, 255, 129);
+            line-height: 1.5em;
+            position: relative;
+            animation: float 3s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-40px);
+            }
+        }
+
+        #input {
+            height: 32px;
+            width: 656px;
+            font-family: 'Times New Roman', Times, serif;
+            resize: none !important;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 4px solid rgb(162, 213, 212);
+            font-size: 20px;
+            outline: #fff;
+            text-align: center;
+        }
+
+        #ress {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        #ress textarea {
+            height: 200px;
+            width: 600px;
+            background-color: #040404;
+            color: white;
+            resize: none;
+            border-radius: 10px;
+            padding: 10px;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .btn {
+            outline: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #030303;
+            min-width: 200px;
+            border: 0;
+            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
+            box-sizing: border-box;
+            padding: 16px 20px;
+            color: #fff;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            overflow: hidden;
+            cursor: pointer;
+            margin-left: 33%;
+        }
+
+        .btn:hover {
+            opacity: .95;
+        }
+
+        .btn .animation {
+            border-radius: 100%;
+            animation: ripple 0.6s linear infinite;
+        }
+
+        @keyframes ripple {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.1), 0 0 0 20px rgba(255, 255, 255, 0.1), 0 0 0 40px rgba(255, 255, 255, 0.1), 0 0 0 60px rgba(255, 255, 255, 0.1);
+            }
+            100% {
+                box-shadow: 0 0 0 20px rgba(255, 255, 255, 0.1), 0 0 0 40px rgba(255, 255, 255, 0.1), 0 0 0 60px rgba(255, 255, 255, 0.1), 0 0 0 80px rgba(255, 255, 255, 0);
+            }
+        }
+
+        @media screen and (max-width: 768px) {
+            #input {
+                height: 32px;
+                width: 400px;
+                font-family: 'Times New Roman', Times, serif;
+                resize: none !important;
+                border-radius: 10px;
+                margin-bottom: 20px;
+                border: 4px solid rgb(162, 213, 212);
+                font-size: 20px;
+                outline: #fff;
+                text-align: center;
+            }
+
+            .btn {
+                margin-left: 26%;
+            }
+
+            #ress textarea {
+                height: 200px;
+                width: 350px;
+            }
+        }
+
+        
+        .loader {
+            border: 8px solid rgba(0, 0, 0, 0.3);
+            border-top: 8px solid #ffffff;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+            display: none;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AI TwinTalk</h1>
+        <form>
+            <textarea id="input" placeholder="Write Your Query Here" cols="30" rows="10"></textarea>
+            <div>
+                <button class="btn"><i class="animation"></i>Generate Response<i class="animation"></i></button>
+            </div>
+        </form>
+    </div>
+
+    <div class="loader" id="loader"></div>
+
+    <div id="ress"></div>
+
+    <script>
+        let input = document.getElementById("input");
+        let button = document.querySelector(".btn");
+        let ressDiv = document.getElementById("ress");
+        let loader = document.getElementById("loader");
+
+        button.addEventListener("click", async (e) => {
+            e.preventDefault();
+            const question = input.value.trim();
+            if (question !== '') {
+                try {
+                    loader.style.display = "block"; 
+                    const apiKey = '245e539acdmshc0a405da1823177p16568djsn42f53fded573';
+                    const apiHost = 'simple-chatgpt-api.p.rapidapi.com';
+                    const url = 'https://simple-chatgpt-api.p.rapidapi.com/ask';
+                    
+                    const options = {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-RapidAPI-Key': apiKey,
+                            'X-RapidAPI-Host': apiHost
+                        },
+                        body: JSON.stringify({ question })
+                    };
+    
+                    const response = await fetch(url, options);
+                    const result = await response.text();
+
+                    loader.style.display = "none"; 
+
+                    const textarea = document.createElement("textarea");
+                    textarea.cols = "30";
+                    textarea.rows = "10";
+                    textarea.value = result; 
+                    ressDiv.innerHTML = '';
+                    ressDiv.appendChild(textarea);
+                } catch (error) {
+                    console.error(error);
+                    loader.style.display = "none"; 
+                }
+            } else {
+                textarea.value = "Please Enter Something To get Response";
+            }
+        });
+    </script>
+</body>
+</html>
